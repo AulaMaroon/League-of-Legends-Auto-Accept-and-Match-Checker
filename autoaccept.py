@@ -42,7 +42,7 @@ async def connect(connection):
                     await connection.request('post', '/lol-matchmaking/v1/ready-check/accept')
                 if currentphase == 'ChampSelect':
                     await matchchecker(connection)
-                    exit()
+                    break
         if keyboard.is_pressed('esc'):
             exit()
 
@@ -87,6 +87,7 @@ async def matchchecker(connection):
                 print()
             except:
                 print('(No Win Rate Data)')
+                print()
         except:
             pass
     await connector.stop()
