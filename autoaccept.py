@@ -37,7 +37,7 @@ async def connect(connection):
                 currentphase = await gamephase.json()
                 if currentphase == 'Lobby':
                     await connection.request('post', '/lol-lobby/v2/lobby/matchmaking/search')
-                if currentphase == 'Matchmaking':
+                if currentphase == 'ReadyCheck':
                     await connection.request('post', '/lol-matchmaking/v1/ready-check/accept')
                 if currentphase == 'ChampSelect':
                     await matchchecker(connection)
