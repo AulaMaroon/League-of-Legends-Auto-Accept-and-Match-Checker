@@ -2,6 +2,7 @@ from lcu_driver import Connector
 import os
 import keyboard
 import time
+from sys import exit
 
 connector = Connector()
 # fired when LCU API is ready to be used
@@ -54,31 +55,43 @@ async def matchchecker(connection):
             sums = await connection.request('get', '/lol-summoner/v1/summoners/'+str(summonersid))
             displayname = (await sums.json())['displayName']
             puuid = (await sums.json())['puuid']
+            rankstats = await connection.request('get', '/lol-ranked/v1/ranked-stats/' + puuid)
             try:
-                rankstats = await connection.request('get', '/lol-ranked/v1/ranked-stats/' + puuid)
-                previousdiv = (await rankstats.json())['highestRankedEntrySR']['previousSeasonEndDivision']
-                previoustier = (await rankstats.json())['highestRankedEntrySR']['previousSeasonEndTier']
                 currentdiv = (await rankstats.json())['highestRankedEntrySR']['division']
                 currenttier = (await rankstats.json())['highestRankedEntrySR']['tier']
-                currentwin = (await rankstats.json())['highestRankedEntrySR']['wins']
-                currentloss = (await rankstats.json())['highestRankedEntrySR']['losses']
-                totalmatch = (currentwin + currentloss)
-                winrate = int(currentwin / totalmatch * 100)
-                #os.system('cls')
                 playernumber = i + 1
                 print('Player ' + str(playernumber))
-                print(displayname + ' ' + '(' + currenttier + ' ' + currentdiv + ')')
-                print('Previous Rank (' + previoustier + ' ' + previousdiv + ')')
-                print('Wins : ' + str(currentwin) + ' | ' + 'Loss : ' + str(currentloss) + ' | Win Rate : ' + str(winrate) + ' %')
-                print()
+                if 'NA' in currentdiv:
+                    print(displayname + ' (No Current Season Data)')
+                else:
+                    print(displayname + ' ' + '(' + currenttier + ' ' + currentdiv + ')')
             except:
                 playernumber = i + 1
                 print('Player ' + str(playernumber))
-                print(displayname)
-                print('(No Current/Previous Rank Data)')
+                print(displayname + ' (No Current Season Data)')
+            try:
+                previousdiv = (await rankstats.json())['highestRankedEntrySR']['previousSeasonEndDivision']
+                previoustier = (await rankstats.json())['highestRankedEntrySR']['previousSeasonEndTier']
+                if 'NA' in previousdiv:
+                    print('(No Previous Season Data)')
+                else:
+                    print('Previous Rank (' + previoustier + ' ' + previousdiv + ')')
+            except:
+                print('(No Previous Rank Data)')
+            try:
+                currentwin = (await rankstats.json())['highestRankedEntrySR']['wins']
+                currentloss = (await rankstats.json())['highestRankedEntrySR']['losses']
+                totalmatch = (currentwin + currentloss)
+                winrate = int(currentwin / totalmatch * 100)            
+                print('Wins : ' + str(currentwin) + ' | ' + 'Loss : ' + str(currentloss) + ' | Win Rate : ' + str(winrate) + ' %')
                 print()
+            except:
+                print('(No Win Rate Data)')
         except:
             pass
+    await connector.stop()
+
+
 
 # fired when League Client is closed (or disconnected from websocket)
 @connector.close
