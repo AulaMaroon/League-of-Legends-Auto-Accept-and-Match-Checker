@@ -1,4 +1,3 @@
-"# League-of-Legends-Auto-Accept-and-Match-Checker" 
 # League of Legends Auto Accept and Stat Checker
 The title says it all, a python script to auto accept your league of legends queue and check your teammates stat
 
