@@ -42,7 +42,9 @@ async def connect(connection):
                     await connection.request('post', '/lol-matchmaking/v1/ready-check/accept')
                 if currentphase == 'ChampSelect':
                     await matchchecker(connection)
-                    break
+                    input()
+                
+            
         if keyboard.is_pressed('esc'):
             exit()
 
@@ -56,9 +58,10 @@ async def matchchecker(connection):
             displayname = (await sums.json())['displayName']
             puuid = (await sums.json())['puuid']
             rankstats = await connection.request('get', '/lol-ranked/v1/ranked-stats/' + puuid)
+            queues = (await rankstats.json())['queues'][0]
             try:
-                currentdiv = (await rankstats.json())['highestRankedEntrySR']['division']
-                currenttier = (await rankstats.json())['highestRankedEntrySR']['tier']
+                currentdiv = queues['division']
+                currenttier = queues['tier']
                 playernumber = i + 1
                 print('Player ' + str(playernumber))
                 if 'NA' in currentdiv:
@@ -70,8 +73,8 @@ async def matchchecker(connection):
                 print('Player ' + str(playernumber))
                 print(displayname + ' (No Current Season Data)')
             try:
-                previousdiv = (await rankstats.json())['highestRankedEntrySR']['previousSeasonEndDivision']
-                previoustier = (await rankstats.json())['highestRankedEntrySR']['previousSeasonEndTier']
+                previousdiv = queues['previousSeasonEndDivision']
+                previoustier = queues['previousSeasonEndTier']
                 if 'NA' in previousdiv:
                     print('(No Previous Season Data)')
                 else:
@@ -79,8 +82,8 @@ async def matchchecker(connection):
             except:
                 print('(No Previous Rank Data)')
             try:
-                currentwin = (await rankstats.json())['highestRankedEntrySR']['wins']
-                currentloss = (await rankstats.json())['highestRankedEntrySR']['losses']
+                currentwin = queues['wins']
+                currentloss = queues['losses']
                 totalmatch = (currentwin + currentloss)
                 winrate = int(currentwin / totalmatch * 100)            
                 print('Wins : ' + str(currentwin) + ' | ' + 'Loss : ' + str(currentloss) + ' | Win Rate : ' + str(winrate) + ' %')
