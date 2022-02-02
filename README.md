@@ -1,4 +1,4 @@
-# League of Legends Auto Accept and Stat Checker
+# League of Legends Auto Accept and Stat Checker (League Driver)
 The title says it all, a python script to auto accept your league of legends queue and check your teammates stat
 
 # How to use
