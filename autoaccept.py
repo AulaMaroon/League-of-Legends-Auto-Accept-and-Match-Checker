@@ -43,6 +43,7 @@ async def connect(connection):
                 if currentphase == 'ChampSelect':
                     await matchchecker(connection)
                     input()
+                
 
 async def matchchecker(connection):
     os.system('cls')
